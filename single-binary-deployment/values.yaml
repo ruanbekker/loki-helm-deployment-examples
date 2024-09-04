@@ -1,0 +1,94 @@
+loki:
+  deploymentMode: SingleBinary
+  loki:
+    auth_enabled: false
+    commonConfig:
+      replication_factor: 1
+    storage:
+      type: filesystem
+    schemaConfig:
+      configs:
+        - from: "2024-01-01"
+          store: tsdb
+          index:
+            prefix: loki_index_
+            period: 24h
+          object_store: filesystem
+          schema: v13
+    server:
+      http_server_read_timeout: 3m
+      http_server_write_timeout: 3m
+    compactor:
+      working_directory: /var/loki/retention
+      compaction_interval: 3h
+      retention_enabled: true
+      retention_delete_delay: 2h
+      delete_request_store: "filesystem"
+      delete_request_store_key_prefix: "index/"
+    ingester:
+      chunk_target_size: 5242880 # 5mb
+      max_chunk_age: 4h # wait for 4h before flushing to storage
+      chunk_idle_period: 45m # keep chunks in memory for longer
+    querier:
+      # how far back in time queries are allowed to go when
+      # querying ingesters directly
+      query_ingesters_within: 5h
+      # The maximum number of concurrent queries allowed
+      max_concurrent: 2048
+    limits_config:
+      retention_period: 48h
+      max_streams_per_user: 10000
+      max_global_streams_per_user: 10000
+    frontend:
+      # Maximum number of outstanding requests per tenant per frontend
+      max_outstanding_per_tenant: 2048
+      # Compress HTTP responses
+      compress_responses: true
+    # https://github.com/grafana/loki/issues/12506#issuecomment-2049831044
+    # https://github.com/grafana/loki/pull/12577
+    # query_range:
+    #   split_queries_by_interval: 24h
+    #   parallelise_shardable_queries: false
+
+  singleBinary:
+    replicas: 1
+    persistence:
+      enabled: false
+    # https://github.com/grafana/loki/issues/4466
+    extraVolumes:
+      - name: data
+        emptyDir: {}
+    extraVolumeMounts:
+      - name: data
+        mountPath: /var/loki
+
+  read:
+    replicas: 0
+  backend:
+    replicas: 0
+  write:
+    replicas: 0
+
+  test:
+    enabled: false
+
+  chunksCache:
+    enabled: true
+  resultsCache:
+    enabled: true
+
+  lokiCanary:
+    enabled: false
+
+  monitoring:
+    dashboards:
+      enabled: true
+      namespace: monitoring
+    rules:
+      enabled: true
+      namespace: monitoring
+    serviceMonitor:
+      enabled: true
+      labels:
+        release: kube-prometheus-stack
+
