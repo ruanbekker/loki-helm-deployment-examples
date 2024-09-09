@@ -66,10 +66,14 @@ loki:
         secret_access_key: supersecret
   ingester:
     chunk_encoding: snappy
+    chunk_target_size: 5242880
+    max_chunk_age: 4h
+    chunk_idle_period: 45m
   tracing:
     enabled: true
   querier:
     max_concurrent: 4
+    query_ingesters_within: 5h
   frontend:
     scheduler_address: ""
     tail_proxy_url: ""
@@ -84,9 +88,8 @@ loki:
     query_timeout: 300s
     reject_old_samples: true
     reject_old_samples_max_age: 168h
-    split_queries_by_interval: 15m
     volume_enabled: true
-    max_query_length: 5h
+    max_query_length: 12h
     retention_period: 4h
     ingestion_rate_mb: 8
     ingestion_burst_size_mb: 12
@@ -146,11 +149,9 @@ resultsCache:
   enabled: true
   allocatedMemory: 1024
 
-# SingleBinary Deployment
 singleBinary:
   replicas: 0
 
-# Microservices Deployment
 ingester:
   replicas: 0
 querier:
