@@ -23,8 +23,7 @@ config:
   serverPort: 3101
   clients:
     - url: http://loki-gateway/loki/api/v1/push
-      headers:
-        X-Scope-OrgID: ruanbekker
+
   positions:
     filename: /run/promtail/positions.yaml
   snippets:
