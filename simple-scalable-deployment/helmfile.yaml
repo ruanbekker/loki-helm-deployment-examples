@@ -16,7 +16,7 @@ releases:
     version: 6.7.1
     namespace: default
     values:
-      - ./values.yaml
+      - ./minio-values.yaml
 
   - name: promtail
     chart: grafana/promtail
