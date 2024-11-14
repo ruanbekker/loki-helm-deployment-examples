@@ -17,6 +17,8 @@ loki:
     http_listen_port: 3100
     http_server_read_timeout: 600s
     http_server_write_timeout: 600s
+    grpc_server_max_recv_msg_size: 8388608  # 8 MB
+    grpc_server_max_send_msg_size: 8388608  # 8 MB
   schemaConfig:
     configs:
       - from: 2024-04-01
